@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	h3 { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px; }
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left; }
+	div#head_bar { margin-top:10px; margin-left:310px; }
+	p{ font-size: 50px;}
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script>
+	$(document).ready(function(){
+		var private_token = $.cookie('private_token');
+//		var tid = $.cookie('teamId');
+//		getProject(private_token, tid)
+		getNameList(private_token);
+	});
+
+	function getNameList(token){
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/group?private_token=" + token,
+			"dataType":"json"
+		};
+
+		$.ajax(settings).done(function(result){
+			show_msg(result[0]["id"]);
+
+			var i;
+			for(i in result) {
+				$("#cp_select").append(new Option(result[i]["name"], result[i]["id"]));
+			}
+		});
+	}
+
+	$(function() {
+		$("#cp_select").change(function () {
+			var t = $(this).val();
+			show_msg(t);
+		});
+	});
+
+	function show_msg(id) {
+		var token = $.cookie('private_token');
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/group/member?private_token=" + token + "&gid=" + id,
+			"dataType":"json",
+		}
+
+		$.ajax(settings).done(function(result){
+			console.log(result);
+			$("#cp_table").html("");
+			inti();
+
+			var id;
+			for(id in result) {;
+				var table = document.getElementById("cp_table");
+				var row = table.insertRow(-1);
+				row.id = "row" + id;
+
+				var cell1 = row.insertCell(-1);
+				cell1.innerHTML = result[id]["id"];
+				var cell2 = row.insertCell(-1);
+				cell2.innerHTML = result[id]["name"];
+				var cell3 = row.insertCell(-1);
+				switch (result[id]["type_id"]){
+					case 0:
+						cell3.innerHTML = "Admin";
+						break;
+					case 1:
+						cell3.innerHTML = "Development Leader";
+						break;
+					case 2:
+						cell3.innerHTML = "Development Manager";
+						break;
+					case 3:
+						cell3.innerHTML = "Development Member";
+						break;
+					default:
+						break;
+				}
+				var cell4 = row.insertCell(-1);
+				cell4.innerHTML = "<button id=\"btn_project\" class=\"btn btn-primary\" onclick=\"person_delete(" + result[id]["id"] + ");\" type=\"button\">删除</button>";
+			}
+		});
+	}
+
+	function person_delete(id){
+		var token = $.cookie('private_token');
+		var oid = $.cookie('id');
+		var gid = $("#cp_select").val();
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/group/delete/member?private_token=" + token + "&oid=" + oid + "&gid=" + gid + "&uid=" + id,
+			"dataType":"json",
+		}
+
+		$.ajax(settings).done(function(result) {
+			console.log(result);
+			if(result) {
+				window.location = "./team_person.html"
+			}else{
+				alert("You are not allowed to make operation.");
+			}
+		});
+	}
+
+	function inti(){
+		var table = document.getElementById("cp_table");
+		var row = table.insertRow(-1);
+
+		var cell = row.insertCell(-1);
+		cell.innerHTML = "成员ID";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "成员名称";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "成员角色";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "删除";
+	}
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="guide_bar">
+				<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+			</div>
+		</div>
+		<div class="span12">
+			<div id="head_bar">
+				<object scrolling="no" type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+			</div>
+		</div>
+	</div>
+	<div id="cp_table_div">
+		<p style="font-size: 35px;">团队人员查看</p>
+		<form role="form" style="width: 30%;">
+			<label for="role">选择团队：</label>
+			<div id="role" class="form-group">
+				<select id="cp_select" style="font-size: 20px;" class="form-control">
+				</select>
+			</div>
+		</form>
+		<table class="table table-hover" id="cp_table">
+			<thead>
+			<tr>
+				<th>
+					成员ID
+				</th>
+				<th>
+					成员名称
+				<th>
+					成员角色
+				</th>
+				<th>删除</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

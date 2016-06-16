@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left }
+	div#head_bar { margin-top:10px; margin-left:310px}
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var private_token = $.cookie('private_token');
+		var pid = JSON.parse($.cookie('projectId'));
+		getProject(private_token, pid);
+	});
+
+	function getProject(token, pid){
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/project/getDetail?id=" + pid + "&private_token=" + token,
+			"dataType":"json",
+		};
+
+		$.ajax(settings).done(function(result){
+			//var table = document.getElementById("cp_table");
+			$("#cp_name").prop("value", result[0]["name"]);
+			$("#cp_select").val(result[0]["type_id"]);
+			$("#cp_desc").prop("value", result[0]["description"]);
+		});
+	}
+
+	function save(){
+		var token = $.cookie('private_token');
+		var pid = JSON.parse($.cookie('projectId'));
+		var name = $("#cp_name").val();
+		var type = $("#cp_select").val();
+		var description = $("#cp_desc").val();
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/project/modify?id=" + pid + "&private_token=" + token + "&name=" + name + "&description=" + description + "&type=" + type,
+			"dataType":"json",
+		};
+
+		//alert(settings.url);
+
+		$.ajax(settings).done(function(result){
+			window.location = "./project.html"
+		});
+	}
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span12">
+					<div id="guide_bar">
+						<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+					</div>
+				</div>
+				<div class="span12">
+					<div id="head_bar">
+						<object type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="cp_table_div">
+			<p style="font-size: 35px;">组件信息修改</p>
+			<table style="font-size: 22px;" class="table table-hover" id="cp_table">
+				<thead>
+				<tr>
+					<th>
+						属性
+					</th>
+					<th>
+						值
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td>名称</td>
+					<td><input id="cp_name"/></td>
+				</tr>
+				<tr>
+					<td>类型</td>
+					<td>
+						<div id="role" class="form-group">
+							<select id="cp_select" style="font-size: 20px; width:25%;" class="form-control">
+								<option value="1">操作系统段(OSS)组件</option>
+								<option value="2">I/O服务段(IOSS)组件</option>
+								<option value="3">特定平台服务段(PSSS)组件</option>
+								<option value="4">传输服务段(TSS)组件</option>
+								<option value="5">可移植组件段(PCS)组件</option>
+							</select>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>描述</td>
+					<td><input id="cp_desc" style="width: 500px;"/></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<button id="btn_confirm" class="btn btn-primary" onclick="save();" type="button">保存更改</button>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+</html>

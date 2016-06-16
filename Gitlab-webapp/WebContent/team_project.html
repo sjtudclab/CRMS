@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	h3 { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px; }
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left; }
+	div#head_bar { margin-top:10px; margin-left:310px; }
+	p{ font-size: 50px;}
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script>
+	$(document).ready(function(){
+		var private_token = $.cookie('private_token');
+//		var tid = $.cookie('teamId');
+//		getProject(private_token, tid)
+		getNameList(private_token);
+	});
+
+	function getNameList(token){
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/group?private_token=" + token,
+			"dataType":"json"
+		};
+
+		$.ajax(settings).done(function(result){
+			show_msg(result[0]["id"]);
+
+			var i;
+			for(i in result) {
+				$("#cp_select").append(new Option(result[i]["name"], result[i]["id"]));
+			}
+		});
+	}
+
+	$(function() {
+		$("#cp_select").change(function () {
+			var t = $(this).val();
+			show_msg(t);
+		});
+	});
+
+	function show_msg(tid) {
+		var token = $.cookie('private_token');
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/group/project?private_token=" + token + "&gid=" + tid,
+			"dataType":"json",
+		}
+
+		$.ajax(settings).done(function(result){
+			console.log(result);
+			$("#cp_table").html("");
+			inti();
+			var id;
+			for(id in result) {
+				var cp_name = result[id]["name"];
+				var cp_id = result[id]["id"];
+				var cp_description = result[id]["description"];
+				var cp_update_time = result[id]["namespace"]["updated_at"];
+
+				//console.log(cp_name + ' ' + cp_id + ' ' + cp_decsrption + ' ' + cp_update_time );
+
+				var table = document.getElementById("cp_table");
+				var row = table.insertRow(-1);
+				row.id = "row" + id;
+
+				var cell1 = row.insertCell(-1);
+				cell1.innerHTML = cp_id;
+				var cell2 = row.insertCell(-1);
+				cell2.innerHTML = cp_name;
+//				var cell3 = row.insertCell(-1);
+//				if (result[id]["type_id"] == 1)
+//					cell3.innerHTML = "操作系统段OSS";
+//				if (result[id]["type_id"] == 2)
+//					cell3.innerHTML = "I/O服务段IOSS";
+//				if (result[id]["type_id"] == 3)
+//					cell3.innerHTML = "特定平台服务段PSSS";
+//				if (result[id]["type_id"] == 4)
+//					cell3.innerHTML = "传输服务段TSS";
+//				if (result[id]["type_id"] == 5)
+//					cell3.innerHTML = "可移植组件段PCS";
+				var cell4 = row.insertCell(-1);
+				cell4.innerHTML = cp_description;
+				var cell5 = row.insertCell(-1);
+				cell5.innerHTML = cp_update_time;
+				var cell6 = row.insertCell(-1);
+				cell6.innerHTML = "<button id=\"btn_project\" class=\"btn btn-primary\" onclick=\"project_detail(" + cp_id + ");\" type=\"button\">详细</button>";
+				var cell7 = row.insertCell(-1);
+				cell7.innerHTML = "<button id=\"btn_modify\" class=\"btn btn-primary\" onclick=\"project_modify(" + cp_id + ");\" type=\"button\">修改</button>";
+				var cell8 = row.insertCell(-1);
+				cell8.innerHTML = "<button id=\"btn_delete\" class=\"btn btn-primary\" onclick=\"project_delete(" + cp_id + ");\" type=\"button\">删除</button>";
+
+			}
+		});
+	}
+
+	function project_detail(id){
+		$.cookie('projectId', id, 	{path : '/', expries: 10});
+		window.location = "./project_detail.html"
+	}
+
+	function project_modify(id){
+		var role = $.cookie('role');
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/permission/get?id=" + role + "&index=" + 7,
+			"dataType":"json",
+		}
+
+		$.ajax(settings).done(function(result) {
+			console.log(result);
+			if(result) {
+				$.cookie('projectId', id, {path: '/', expries: 10});
+				window.location = "./project_modify.html"
+			}else{
+				alert("You are not allowed to make operation.");
+			}
+		});
+	}
+
+	function project_delete(id){
+		var role = $.cookie('role');
+		var token = $.cookie('private_token');
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/group/delete/project?role=" + role + "&pid=" + id + "&private_token=" + token,
+			"dataType":"json",
+		}
+
+		$.ajax(settings).done(function(result) {
+			if(result){
+				alert("You are not allowed to make operation.")
+			}else{
+				window.location = "./.html"
+			}
+		});
+	}
+
+	function inti(){
+		var table = document.getElementById("cp_table");
+		var row = table.insertRow(-1);
+
+		var cell = row.insertCell(-1);
+		cell.innerHTML = "项目ID";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "项目名称";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "描述";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "最后更新时间";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "查看详细";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "修改项目信息";
+		cell = row.insertCell(-1);
+		cell.innerHTML = "删除项目";
+	}
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="guide_bar">
+				<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+			</div>
+		</div>
+		<div class="span12">
+			<div id="head_bar">
+				<object scrolling="no" type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+			</div>
+		</div>
+	</div>
+	<div id="cp_table_div">
+		<p style="font-size: 35px;">团队项目查看</p>
+		<form role="form" style="width: 30%;">
+			<label for="role">选择团队：</label>
+			<div id="role" class="form-group">
+				<select id="cp_select" style="font-size: 20px;" class="form-control">
+				</select>
+			</div>
+		</form>
+		<table class="table table-hover" id="cp_table">
+			<thead>
+			<tr>
+				<!--<th>-->
+					<!--项目ID-->
+				<!--</th>-->
+				<!--<th>-->
+					<!--项目名称-->
+				<!--&lt;!&ndash;<th>&ndash;&gt;-->
+					<!--&lt;!&ndash;项目类型&ndash;&gt;-->
+				<!--&lt;!&ndash;</th>&ndash;&gt;-->
+				<!--<th>-->
+					<!--描述-->
+				<!--</th>-->
+				<!--<th>-->
+					<!--最后更新时间-->
+				<!--</th>-->
+				<!--<th>查看详细</th>-->
+				<!--<th>修改项目信息</th>-->
+				<!--<th>删除项目</th>-->
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

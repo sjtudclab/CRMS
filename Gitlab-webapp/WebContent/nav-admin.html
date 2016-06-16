@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CPL System</title>
+    <style type="text/css">
+        div{ font-size: 20px; }
+        div#nav-list-head {text-align: center; margin: 30px; color:white; font-size: 20px; }
+        center { margin-right: auto; margin-left: auto; }
+        div#main {height: 750px; }
+    </style>
+
+    <link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="./js/json2.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.js"></script>
+</head>
+<body>
+<div class="navbar nav-list navbar-inverse" id="main">
+    <div class="panel-group" id="accordion">
+        <div id="nav-list-head">
+            CRMS System
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion"
+                       href="#collapseOne">
+                        权限设置
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <ul class="nav nav-list">
+                        <li><a href="authority.html" target="_parent">角色权限查看</a></li>
+                        <li><a href="authority_modify.html" target="_parent">角色权限修改</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion"
+                       href="#collapseTwo">
+                        组件设置
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <ul class="nav nav-list">
+                        <li><a href="project.html" target="_parent">组件查看</a></li>
+                        <li><a href="order.html" target="_parent">入库单处理</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion"
+                       href="#collapseThree">
+                        系统设置
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <ul class="nav nav-list">
+                        <li><a href="userInfo.html" target="_parent">个人信息</a></li>
+                        <li><a href="person.html" target="_parent">用户查看</a></li>
+                        <li><a href="person_create.html" target="_parent">用户添加</a></li>
+                        <li><a href="#" target="_parent">系统日志</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion"
+                       href="#collapseFour">
+                        团队设置
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseFour" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <ul class="nav nav-list">
+                        <li><a href="team.html" target="_parent">团队查看</a></li>
+                        <li><a href="team_create.html" target="_parent">创建团队</a></li>
+                        <li><a href="team_person.html" target="_parent">查看团队成员</a></li>
+                        <li><a href="team_person_add.html" target="_parent">添加成员</a></li>
+                        <li><a href="team_project.html" target="_parent">查看团队项目</a></li>
+                        <li><a href="project_create.html" target="_parent">创建项目</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CPL System</title>
+    <style type="text/css">
+        body {
+            overflow-x : hidden;
+            overflow-y : hidden;
+        }
+        li{ margin-right: 10px;}
+    </style>
+    <link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="./js/json2.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.js"></script>
+    <script>
+        function logout(){
+            $.cookie('username', "",  { expires: -1 });
+            $.cookie('password', "",  { expires: -1 });
+            window.parent.location = "./index.html"
+        }
+    </script>
+</head>
+<body>
+<div id="guide_bar" class="navbar navbar-inverse">
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="userInfo.html" target="_parent">个人信息</a></li>
+        <li><a href="javascript:void(0)" onclick="logout();" target="_parent">登出</a></li>
+    </ul>
+</div>
+</body>
+</html>

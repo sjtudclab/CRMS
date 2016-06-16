@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	h3 { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px; }
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left }
+	div#head_bar { margin-top:10px; margin-left:310px}
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var private_token = $.cookie('private_token');
+		getUser(private_token);
+	});
+
+	function getUser(token){
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/user/all?private_token=" + token,
+			"dataType":"json",
+		};
+
+		$.ajax(settings).done(function(result){
+			console.log(result);
+			for(id in result){
+				var table = document.getElementById("cp_table");
+				var row = table.insertRow(-1);
+				var cell = row.insertCell(-1);
+				cell.innerHTML = result[id]["id"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[id]["name"];
+				cell = row.insertCell(-1);
+				switch (result[id]["type_id"]){
+					case 0:
+						cell.innerHTML = "Admin";
+						break;
+					case 1:
+						cell.innerHTML = "Development Leader";
+						break;
+					case 2:
+						cell.innerHTML = "Development Manager";
+						break;
+					case 3:
+						cell.innerHTML = "Development Member";
+						break;
+					default:
+						break;
+				}
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[id]["email"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[id]["created_at"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[id]["last_sign_in_at"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = "<button id=\"btn_del\" class=\"btn btn-primary\" onclick=\"per_delete("+ result[id]["id"] +");\" type=\"button\">删除用户</button>";
+			}
+		});
+	}
+
+	function per_delete(id){
+		var token = $.cookie('private_token');
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/user/delete?id="+ id +"&private_token=" + token,
+			"dataType":"json",
+		};
+
+		$.ajax(settings).done(function(result){
+			window.location = "./person.html";
+		});
+	}
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="guide_bar">
+				<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+			</div>
+		</div>
+		<div class="span12">
+			<div id="head_bar">
+				<object scrolling="no" type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+			</div>
+		</div>
+	</div>
+	<div id="cp_table_div">
+		<p style="font-size: 35px;">用户查看</p>
+		<table class="table table-hover" id="cp_table">
+			<thead>
+			<tr>
+				<th>
+					用户编号
+				</th>
+				<th>
+					用户名称
+				</th>
+				<th>
+					角色
+				</th>
+				<th>
+					邮箱
+				</th>
+				<th>
+					注册时间
+				</th>
+				<th>
+					最近登录时间
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

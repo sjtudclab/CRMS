@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+h3 { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px; }
+table#cp_table { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px;}
+div#guide_bar { MARGIN: 10px; }
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var obj = JSON.parse($.cookie('userinfo'));
+	var private_token = obj["private_token"];
+	getProject(private_token);
+	
+});
+
+function logout(){
+	$.cookie('username', "",  { expires: -1 });
+	$.cookie('password', "",  { expires: -1 });
+	$.cookie('userinfo', "",  { expires: -1 });
+	window.location = "./index.html"
+}
+
+function getProject(token){
+	var settings = {
+		"async" : true,
+		"crossDomain" : true,
+		"url" : "http://202.120.40.111:9090/api/v3/groups?private_token=" + token,
+		"method" : "GET",
+	}
+	
+	$.ajax(settings).done(function(result){
+		
+		for(id in result)
+			var cp_name = result[id]["name"];
+			var cp_id = result[id]["id"];
+			var cp_decsrption = result[id]["description"];
+		
+			//console.log(cp_name + ' ' + cp_id + ' ' + cp_decsrption + ' ' + cp_update_time );
+			
+			var table = document.getElementById("cp_table");
+			var row = table.insertRow(-1);
+			row.id = "row" + id;
+		
+			var cell1 = row.insertCell(-1);
+			cell1.innerHTML = cp_id;
+			var cell2 = row.insertCell(-1);
+			cell2.innerHTML = cp_name;
+			var cell3 = row.insertCell(-1);
+			cell3.innerHTML = cp_decsrption;
+			
+	});
+}
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="guide_bar" class="navbar navbar-inverse ">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">CPL</a>
+				</div>
+				<ul class="nav navbar-nav">
+					<li class="dropdown">
+              			<a href="#" class="dropdown-toggle" data-toggle="dropdown">组件库 <span class="caret"></span></a>
+              			<ul class="dropdown-menu" role="menu">
+                			<li><a href="project.html">组件库查看</a></li>
+                			<li><a href="#">创建组件库</a></li>
+              			</ul>
+              		</li>	
+              		<li class="dropdown">
+              			<a href="#" class="dropdown-toggle" data-toggle="dropdown">个人 <span class="caret"></span></a>
+              			<ul class="dropdown-menu" role="menu">
+                			<li><a href="./userInfo.html">个人信息</a></li>
+                			<li><a  href="javascript:void(0)" onclick="logout();">登出</a></li>
+              			</ul>
+              		</li>
+					<li class="active">
+              			<a href="#" class="dropdown-toggle" data-toggle="dropdown">组管理 <span class="caret"></span></a>
+              			<ul class="dropdown-menu" role="menu">
+                			<li><a href="./group.html">个人组信息</a></li>
+                			<li><a href="#">创建组</a></li>
+              			</ul>
+              		</li>
+				</ul>
+			</div>
+			<h3>
+				CPL系统
+			</h3>
+			<table class="table table-hover" id="cp_table">
+				<thead>
+					<tr>
+						<th>
+							组ID
+						</th>
+						<th>
+							组名称
+						</th>
+						<th>
+							组描述
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+</html>

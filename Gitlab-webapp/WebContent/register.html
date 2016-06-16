@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System Register</title>
+<style type="text/css">
+body {TEXT-ALIGN: center;}
+#center { MARGIN-RIGHT: auto; MARGIN-LEFT: auto; }
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#btn_register").click(function(){
+		var email = document.getElementById("email").value;
+		var password = document.getElementById("password").value;
+		var username = document.getElementById("username").value;
+		var name = document.getElementById("name").value;
+
+		if(email == ""){
+			alert("Email can't be empty.");
+			return;
+		}
+		if(password == ""){
+			alert("Password can't be empty.");
+			return;
+		}
+		if(!passwdJudge(password)){
+			alert("Password is too short or with illegal chat.");
+			return;
+		}
+		if(username == ""){
+			alert("Username can't be empty.");
+			return;
+		}
+		if(name == ""){
+			alert("Name can't be empty.");
+			return;
+		}
+		register(email, password, username, name);
+	});
+	
+});
+
+function register(email, password, username, name){
+	var settings = {
+		"type":"post",
+		"async":true,
+		"crossDomain":true,
+		"url":"http://202.120.40.111:9090/api/v3/users",
+		"data": {
+			email : email,
+			password : password,
+			username : username,
+			name : name,
+			can_create_group : true,
+		},
+		"dataType":"json",
+	}
+	
+	$.ajax(settings).done(function(result){
+		alert(success);
+		$.cookie('username', username, 	{path : '/', expries:  3 * 24 * 60 * 60 * 1000});
+		$.cookie('password', password, 	{path : '/', expries:  3 * 24 * 60 * 60 * 1000});
+		
+		var jsonStr = JSON.stringify(result);
+		$.cookie('userinfo', jsonStr, 	{path : '/', expries: 3 * 24 * 60 * 60 * 1000});
+		//console.log(JSON.parse($.cookie('userinfo')));
+		
+		window.location = "project.html"
+	});
+}
+
+function passwdJudge(str){
+    var realLength = 0, len = str.length, charCode = -1;
+    
+    if(len < 8) return false;
+    for (var i = 0; i < len; i++) {
+        charCode = str.charCodeAt(i);
+        if (charCode < 0 || charCode > 128) 
+        	return false;
+        
+    }
+    return true;
+};
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<h1 class="text-center">
+				<strong>CPL系统登录</strong>
+			</h1>
+			</br>
+			<div class="row-fluid">
+				<div class="span12">
+					<form class="form-horizontal">
+						<div>
+							<label class="control-label"  style="display:inline-block;width:70px;" for="inputPassword">邮箱</label>
+							<input id="email" type="text" />
+						</div>
+						<div>
+							<label class="control-label"  style="display:inline-block;width:70px;" for="inputPassword">密码</label>
+							<input id="password" type="password" />
+						</div>
+						<div class="control-group">
+							<label class="control-label"  style="display:inline-block;width:70px;" for="inputUsername">用户名</label>
+							<input id="username" type="text" />
+						</div>
+						<div class="control-group">
+							<label class="control-label"  style="display:inline-block;width:70px;" for="inputUsername">名字</label>
+							<input id="name" type="text" />
+						</div>
+						</br>
+						<div class="control-group">
+							<div class="controls">
+								<button id="btn_register" class="btn" type="button">注册</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	h3 { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px; }
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left; }
+	div#head_bar { margin-top:10px; margin-left:310px; }
+	select{ font-size: 50px;}
+	p{ font-size: 50px;}
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script>
+	$(document).ready(function(){
+		getOrder()
+	});
+
+	function getOrder() {
+		var settings = {
+			"type": "GET",
+			"async": true,
+			"crossDomain": true,
+			"url": "http://127.0.0.1:8000/order/state?state=0",
+			"dataType": "json",
+		}
+
+		$.ajax(settings).done(function (result) {
+			console.log(result);
+			var i;
+			for(i in result){
+				var table = document.getElementById("cp_table");
+				var row = table.insertRow(-1);
+				var cell = row.insertCell(-1);
+				cell.innerHTML = result[i]["id"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[i]["uid"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[i]["pid"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = "<input\>";
+				cell.id = "type0";
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[i]["description"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[i]["date"];
+				cell = row.insertCell(-1);
+				cell.innerHTML = "<button id=\"btn_detail\" class=\"btn btn-primary\" onclick=\"pass(" + result[i]["id"] + "," + result[i]["pid"] + "," + i + ");\" type=\"button\">允许入库</button>";
+				cell = row.insertCell(-1);
+				cell.innerHTML = "<button id=\"btn_detail\" class=\"btn btn-primary\" onclick=\"passNot(" + result[i]["id"] + "," + result[i]["pid"] + "," + i + ");\" type=\"button\">允许入库</button>";
+
+			}
+		});
+	}
+
+	function pass(id, pid, s){
+		var settings = {
+			"type": "GET",
+			"async": true,
+			"crossDomain": true,
+			"url": "http://127.0.0.1:8000/order/enter?state=,
+			"dataType": "json",
+		}
+
+		$.ajax(settings).done(function (result) {
+		window.location = "./project.html"
+	}
+
+	function passNot(id, pid, s){
+
+	}
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="guide_bar">
+				<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+			</div>
+		</div>
+		<div class="span12">
+			<div id="head_bar">
+				<object scrolling="no" type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+			</div>
+		</div>
+	</div>
+	<div id="cp_table_div">
+		<p style="font-size: 35px;">入库申请查看</p>
+		<table class="table table-hover" id="cp_table">
+			<thead>
+			<tr>
+				<th>
+					ID
+				</th>
+				<th>
+					申请人编号
+				</th>
+				<th>
+					申请团队
+				</th>
+				<th>
+					类型
+				</th>
+				<th>
+					描述
+				</th>
+				<th>
+					时间
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

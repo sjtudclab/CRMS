@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left; }
+	div#head_bar { margin-top:10px; margin-left:310px; }
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script>
+	$(document).ready(function(){
+//		var private_token = $.cookie('private_token');
+//		var pid = JSON.parse($.cookie('projectId'));
+		getAuthority();
+	});
+
+	function getAuthority(){
+		var name = ["可以查看操作系统段(OSS)组件","可以查看I/O服务段(IOSS)组件","可以查看特定平台服务段(PSSS)组件","可以查看传输服务段(TSS)组件","可以查看可移植组件段(PCS)组件",
+					"允许创建Team","允许为所在Team添加人员","允许为所在Team删除人员","允许为所在Team创建、修改、删除项目","允许merge项目分支","允许申请项目入库"];
+		var option = ["pone","ptwo","pthree","pfour","pfive","pcreate_team","padd_per","pdel_per","pcreate_pro","ppro_merge","ppro_in"];
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/permission/all",
+			"dataType":"json"
+		};
+
+		$.ajax(settings).done(function(result){
+			console.log(result);
+			var table = document.getElementById("cp_table");
+			var row = table.insertRow(-1);
+			var cell = row.insertCell(-1);
+			cell.innerHTML = "名称";
+			for (var j = 0;j < result.length;j++) {
+				cell = row.insertCell(-1);
+				cell.innerHTML = result[j]["name"];
+			}
+
+
+			for(var i = 0;i < 11;i++){
+				row = table.insertRow(-1);
+				cell = row.insertCell(-1);
+				cell.innerHTML = name[i];
+				for (var j = 0;j < result.length;j++) {
+					cell = row.insertCell(-1);
+					cell.innerHTML = result[j][option[i]] == 1 ? "允许" : "不允许";
+				}
+			}
+		});
+	}
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="guide_bar">
+				<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+			</div>
+		</div>
+		<div class="span12">
+			<div id="head_bar">
+				<object scrolling="no" type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+			</div>
+		</div>
+	</div>
+	<div id="cp_table_div">
+		<p style="font-size: 35px;">角色权限查看</p>
+		<table class="table table-hover" id="cp_table">
+		</table>
+	</div>
+</div>
+</body>
+</html>

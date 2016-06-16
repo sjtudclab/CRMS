@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	h3 { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px; }
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left }
+	div#head_bar { margin-top:10px; margin-left:310px}
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var private_token = $.cookie('private_token');
+	var pid = JSON.parse($.cookie('projectId'));
+	getProject(private_token, pid);
+});
+
+function logout(){
+	$.cookie('username', "",  { expires: -1 });
+	$.cookie('password', "",  { expires: -1 });
+	window.location = "./index.html"
+}
+
+function project_delete(pid){
+	/*
+	var obj = JSON.parse($.cookie('userinfo'));
+	var private_token = obj["private_token"];
+	
+	var settings = {
+		"type":"delete",
+		"async":true,
+		"crossDomain":true,
+		"url":"http://202.120.40.111:9090/api/v3/projects",
+		"data": {
+			id : pid,
+			private_token : private_token,
+		},
+		"dataType":"json",
+	};
+	
+	$.ajax(settings).done(function(result){
+		alert(result);
+		window.location = "./project.html"
+	});
+	*/
+}
+
+function getProject(token, pid){
+	var settings = {
+		"type":"GET",
+		"async":true,
+		"crossDomain":true,
+		"url":"http://127.0.0.1:8000/project/getDetail?id=" + pid + "&private_token=" + token,
+		"dataType":"json",
+	};
+	
+	$.ajax(settings).done(function(result){
+		var table = document.getElementById("cp_table");
+		var row = table.insertRow(-1);
+		
+		var cell1 = row.insertCell(-1);
+		cell1.innerHTML = "id";
+		var cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["id"];
+
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "名称";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["name"];
+
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "类型";
+		cell2 = row.insertCell(-1);
+		if(result[0]["type_id"] == 1)
+			cell2.innerHTML = "操作系统段OSS";
+		if(result[0]["type_id"] == 2)
+			cell2.innerHTML = "I/O服务段IOSS";
+		if(result[0]["type_id"] == 3)
+			cell2.innerHTML = "特定平台服务段PSSS";
+		if(result[0]["type_id"] == 4)
+			cell2.innerHTML = "传输服务段TSS";
+		if(result[0]["type_id"] == 5)
+			cell2.innerHTML = "可移植组件段PCS";
+
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "描述";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["description"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "项目创建者id";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["creator_id"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "当前分支";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["default_branch"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "公开状态";
+		cell2 = row.insertCell(-1);
+		if(result[0]["namespace"]["visibility_level"] == 10)
+			cell2.innerHTML = "仅组内可见";
+		if(result[0]["namespace"]["visibility_level"] == 20)
+			cell2.innerHTML = "公开";
+		
+		if(result[0]["namespace"]["visibility_level"] == 10){
+			row = table.insertRow(-1);
+			cell1 = row.insertCell(-1);
+			cell1.innerHTML = "所属小组";
+			cell2 = row.insertCell(-1);
+			cell2.innerHTML = result[0]["namespace"]["name"];
+		}
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "项目创建时间";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["namespace"]["updated_at"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "项目最后更新时间";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["created_at"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "项目最后浏览时间";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["last_activity_at"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "仓库的ssh地址";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["ssh_url_to_repo"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "仓库的http地址";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["http_url_to_repo"];
+		
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "项目web地址";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = result[0]["web_url"];
+
+		row = table.insertRow(-1);
+		cell1 = row.insertCell(-1);
+		cell1.innerHTML = "删除项目";
+		cell2 = row.insertCell(-1);
+		cell2.innerHTML = "<button class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">Destory</button>";
+
+	});
+}
+
+function project_detail(id){
+	$.cookie('projectId', id, 	{path : '/', expries: 10});
+	window.location = "./project_detail.html"
+}
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid">
+				<div class="span12">
+					<div id="guide_bar">
+						<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+					</div>
+				</div>
+				<div class="span12">
+					<div id="head_bar">
+						<object scrolling="no" type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+					</div>
+				</div>
+			</div>
+			<div id="cp_table_div">
+				<p style="font-size: 35px;">组件查看</p>
+				<table class="table table-hover" id="cp_table">
+					<thead>
+					<tr>
+						<th>
+							属性
+						</th>
+						<th>
+							值
+						</th>
+						<th></th>
+					</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+			<div>
+				<!-- 模态框（Modal） -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				   <div class="modal-dialog">
+				      <div class="modal-content">
+				         <div class="modal-header">
+				            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				            <h4 class="modal-title" id="myModalLabel">
+				               	是否确定要删除项目
+				            </h4>
+				         </div>
+				         <div class="modal-body">
+				           	 删除项目后不可恢复，可能会造成数据丢失。
+				         </div>
+				         <div class="modal-footer">
+				            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				            <button type="button" class="btn btn-primary">提交更改</button>
+				         </div>
+				      </div><!-- /.modal-content -->
+				   </div><!-- /.modal-dialog -->
+				</div><!-- /.modal -->
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

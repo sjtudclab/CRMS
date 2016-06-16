@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+body {TEXT-ALIGN: center;}
+#center { MARGIN-RIGHT: auto; MARGIN-LEFT: auto; }
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#btn_login").click(function(){
+		login();
+	});
+	
+	var un = $.cookie("username");
+	var pw = $.cookie("password");
+	$("#username").val(un);
+	$("#password").val(pw);
+	
+});
+
+function login(){
+	var username = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	
+	var settings = {
+		"type":"GET",
+		"async":true,
+		"crossDomain":true,
+		"url":"http://127.0.0.1:8000/user/login?username=" + username + "&password=" + password,
+		"dataType":"json",
+	}
+	
+	$.ajax(settings).success(function(data){
+		console.log(data["id"]);
+		$.cookie("id",data["id"], "360000");
+		$.cookie("role",data["role"], "360000");
+		$.cookie("private_token",data["private_token"], "360000");
+
+		window.location = "main.html"
+	});
+}
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<h1 class="text-center">
+				<strong>CPL系统登录</strong>
+			</h1>
+			</br>
+			<div class="row-fluid">
+				<div class="span12">
+					<form class="form-horizontal">
+						<div class="control-group">
+							<label class="control-label"  style="display:inline-block;width:100px;" for="username">用户名/邮箱</label>
+							<input id="username" type="text" />
+						</div>
+						<div>
+							<label class="control-label"  style="display:inline-block;width:100px;" for="password">密码</label>
+							<input id="password" type="password" />
+						</div>
+						</br>
+						<div class="control-group">
+							<div class="controls">
+								<button id="btn_login" class="btn" type="button">登陆</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

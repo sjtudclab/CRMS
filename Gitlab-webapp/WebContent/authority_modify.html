@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CPL System</title>
+<style type="text/css">
+	h3 { MARGIN-RIGHT: 30px; MARGIN-LEFT: 30px; font-size:100px; }
+	div#cp_table_div { margin-top:0px; margin-left:320px;  width:75%;}
+	div#guide_bar {margin:0px; float:left; }
+	div#head_bar { margin-top:10px; margin-left:310px; }
+	div#cp_msg1, #cp_msg2, #cp_msg3{ border:solid 4px #1b6d85; margin: 10px;}
+	div#div_btn {float: right; margin-right: 20px;}
+	select{ font-size: 50px;}
+	input.checkbox{
+		width:20px;
+		height:20px;
+		margin-right: 50px;
+	}
+</style>
+
+<link href="./css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./js/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/json2.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+<script>
+	$(document).ready(function(){
+		getNameList();
+		show_msg(1);
+	});
+
+	function getNameList(){
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/permission/list",
+			"dataType":"json"
+		};
+
+		$.ajax(settings).done(function(result){
+			var i;
+			for(i in result) {
+				$("#cp_select").append(new Option(result[i]["name"], parseInt(i) + 1));
+			}
+		});
+	}
+
+	$(function() {
+		$("#cp_select").change(function () {
+			var t = $(this).val();
+			show_msg(t);
+		});
+	});
+
+	function show_msg(t){
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/permission/detail?id=" + t,
+			"dataType":"json"
+		};
+
+		$.ajax(settings).done(function(result){
+			if(result[0]["pone"] == 1)
+				$('input:checkbox#pone').prop('checked', true);
+			else
+				$('input:checkbox').eq(0).prop('checked', false);
+			if(result[0]["ptwo"] == 1)
+				$('input:checkbox').eq(1).prop('checked', true);
+			else
+				$('input:checkbox').eq(1).prop('checked', false);
+			if(result[0]["pthree"] == 1)
+				$('input:checkbox').eq(2).prop('checked', true);
+			else
+				$('input:checkbox').eq(2).prop('checked', false);
+			if(result[0]["pfour"] == 1)
+				$('input:checkbox').eq(3).prop('checked', true);
+			else
+				$('input:checkbox').eq(3).prop('checked', false);
+			if(result[0]["pfive"] == 1)
+				$('input:checkbox').eq(4).prop('checked', true);
+			else
+				$('input:checkbox').eq(4).prop('checked', false);
+			if (result[0]["pcreate_team"] == 1)
+				$('input:checkbox').eq(5).prop('checked', true);
+			else
+				$('input:checkbox').eq(5).prop('checked', false);
+			if(result[0]["padd_per"] == 1)
+				$('input:checkbox').eq(6).prop('checked', true);
+			else
+				$('input:checkbox').eq(6).prop('checked', false);
+			if(result[0]["pdel_per"] == 1)
+				$('input:checkbox').eq(7).prop('checked', true);
+			else
+				$('input:checkbox').eq(7).prop('checked', false);
+			if(result[0]["pcreate_pro"] == 1)
+				$('input:checkbox').eq(8).prop('checked', true);
+			else
+				$('input:checkbox').eq(8).prop('checked', false);
+			if(result[0]["ppro_merge"] == 1)
+				$('input:checkbox').eq(9).prop('checked', true);
+			else
+				$('input:checkbox').eq(9).prop('checked', false);
+			if(result[0]["ppro_in"] == 1)
+				$('input:checkbox').eq(10).prop('checked', true);
+			else
+				$('input:checkbox').eq(10).prop('checked', false);
+		});
+	}
+
+	function save(){
+		var option = [0];
+		for(var i = 0;i < 11;i++){
+			$('input:checkbox').eq(i).prop("checked")==true ? option[i] = 1 : option[i] = 0;
+		}
+
+		var param = "id=" + $("#cp_select").val();
+		param += "&name=" + $("#cp_select").find("option:selected").text()
+		param += "&all=" + 0;
+		param += "&pone=" + option[0];
+		param += "&ptwo=" + option[1];
+		param += "&pthree=" + option[2];
+		param += "&pfour=" + option[3];
+		param += "&pfive=" + option[4];
+		param += "&pcreate_team=" + option[5];
+		param += "&pcreate_pro=" + option[8];
+		param += "&padd_per=" + option[6];
+		param += "&pdel_per=" + option[7];
+		param += "&ppro_merge=" + option[9];
+		param += "&ppro_in=" + option[10];
+
+		var settings = {
+			"type":"GET",
+			"async":true,
+			"crossDomain":true,
+			"url":"http://127.0.0.1:8000/permission/update?" + param,
+			"dataType":"json"
+		};
+
+		$.ajax(settings).done(function(result){
+			show_msg($("#cp_select").val());
+		});
+	}
+
+
+</script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="guide_bar">
+				<object type="text/x-scriptlet" data="nav-admin.html" width=100% height=800></object>
+			</div>
+		</div>
+		<div class="span12">
+			<div id="head_bar">
+				<object scrolling="no" type="text/x-scriptlet" data="head.html" width=100% height=80></object>
+			</div>
+		</div>
+	</div>
+	<div id="cp_table_div">
+		<p style="font-size: 35px;">角色权限修改</p>
+		<form role="form" style="width: 30%;">
+			<label for="role">选择角色：</label>
+			<div id="role" class="form-group">
+				<select id="cp_select" style="font-size: 20px;" class="form-control">
+				</select>
+			</div>
+		</form>
+		<div id="cp_msg1">
+			<p style="font-size: 30px;">组件查询权限</p>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="pone" type="checkbox" class="checkbox">可以查看操作系统段(OSS)组件
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="ptwo" type="checkbox" class="checkbox">可以查看I/O服务段(IOSS)组件
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="pthree" type="checkbox" class="checkbox">可以查看特定平台服务段(PSSS)组件
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="pfour" type="checkbox" class="checkbox">可以查看传输服务段(TSS)组件
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="pfive" type="checkbox" class="checkbox">可以查看可移植组件段(PCS)组件
+			</label>
+			</ul>
+		</div>
+		<div id="cp_msg2">
+			<p style="font-size: 30px;">Team权限</p>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="pcreate_team" type="checkbox" class="checkbox">允许创建Team
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="padd_per" type="checkbox" class="checkbox">允许为所在Team添加人员
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="pdel_per" type="checkbox" class="checkbox">允许为所在Team删除人员
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="pcreate_pro" type="checkbox" class="checkbox">允许为所在Team创建、修改、删除项目
+			</label>
+			</ul>
+		</div>
+		<div id="cp_msg3">
+			<p style="font-size: 30px;">项目权限</p>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="ppro_merge" type="checkbox" class="checkbox">允许merge项目分支
+			</label>
+			<label style="font-size: 20px; margin-left: 50px;" class="checkbox">
+				<input id="ppro_in" type="checkbox" class="checkbox">允许申请项目入库
+			</label>
+			</ul>
+		</div>
+		<div id="div_btn">
+			<button id="btn_project" class="btn btn-primary" onclick="save();" type="button">保存更改</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>
